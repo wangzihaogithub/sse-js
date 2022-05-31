@@ -49,7 +49,11 @@ class Sse {
         es.addEventListener('error', this.handleError)  // 失败
         // 用户事件
         for (let eventName in this.options.eventListeners) {
-          es.addEventListener(eventName, this.options.eventListeners[eventName])
+          try{
+            es.addEventListener(eventName, this.options.eventListeners[eventName])
+          }catch (e) {
+            console.error(`addEventListener(${eventName}) error`, e)
+          }
         }
         return es
       })
