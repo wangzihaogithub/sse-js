@@ -67,7 +67,7 @@ class Sse {
         return this.es
       }
       this.state = Sse.STATE_CONNECT
-      const es = new EventSource(`${this.options.url}/connect?sseVersion=${Sse.version}&clientId=${this.clientId}`)
+      const es = new EventSource(`${this.options.url}/connect?clientId=${this.clientId}&clientVersion=${Sse.version}`)
       es.addEventListener('connect-finish', this.handleConnectionFinish)
       es.addEventListener('open', this.handleOpen)    // 连接成功
       es.addEventListener('error', this.handleError)  // 失败
