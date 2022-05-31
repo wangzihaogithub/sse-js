@@ -18,6 +18,11 @@ class Sse {
     url: '/common/sse',
     eventListeners: {}
   }
+  static STATE_ESTABLISHED = 'ESTABLISHED'
+  static STATE_CONNECT = 'CONNECT'
+  static STATE_CLOSED = 'CLOSED'
+
+  state = Sse.STATE_CLOSED
 
   constructor(options) {
     this.options = Object.assign({}, Sse.defaultOptions, options)
@@ -26,6 +31,7 @@ class Sse {
       const res = JSON.parse(event.data)
       this.connectionId = res.connectionId
       this.reconnectDuration = res.duration || 5000
+      this.state = Sse.STATE_ESTABLISHED
     }
 
     this.handleOpen = () => {
@@ -33,30 +39,31 @@ class Sse {
     }
 
     this.handleError = () => {
+      this.state = Sse.STATE_CLOSED
       this.clearReconnectTimer()
       this.timer = setTimeout(() => {
-        this.newEventSource().then(es => {
-          this.es = es
-        })
+        this.es = this.newEventSource()
       }, this.reconnectDuration || 5000)
     }
 
     this.newEventSource = () => {
-      return this.close().then(_ => {
-        const es = new EventSource(`${this.options.url}/connect?sseVersion=${Sse.version}`)
-        es.addEventListener('connect-finish', this.handleConnectionFinish)
-        es.addEventListener('open', this.handleOpen)    // 连接成功
-        es.addEventListener('error', this.handleError)  // 失败
-        // 用户事件
-        for (let eventName in this.options.eventListeners) {
-          try{
-            es.addEventListener(eventName, this.options.eventListeners[eventName])
-          }catch (e) {
-            console.error(`addEventListener(${eventName}) error`, e)
-          }
+      if (this.state !== Sse.STATE_CLOSED) {
+        return this.es
+      }
+      this.state = Sse.STATE_CONNECT
+      const es = new EventSource(`${this.options.url}/connect?sseVersion=${Sse.version}`)
+      es.addEventListener('connect-finish', this.handleConnectionFinish)
+      es.addEventListener('open', this.handleOpen)    // 连接成功
+      es.addEventListener('error', this.handleError)  // 失败
+      // 用户事件
+      for (let eventName in this.options.eventListeners) {
+        try {
+          es.addEventListener(eventName, this.options.eventListeners[eventName])
+        } catch (e) {
+          console.error(`addEventListener(${eventName}) error`, e)
         }
-        return es
-      })
+      }
+      return es
     }
 
     this.clearReconnectTimer = () => {
@@ -72,29 +79,25 @@ class Sse {
     }
 
     this.close = () => {
+      this.state = Sse.STATE_CLOSED
       if (this.es) {
         this.es.close()
-        if (this.connectionId !== undefined) {
-          try {
-            return fetch(`${this.options.url}/disconnect?connectionId=${this.connectionId}`).then(_ => {
-              // 关闭连接
-              this.clearReconnectTimer()
-              this.es = null
-            })
-          } catch (e) {
-          }
-        }
       }
-      return Promise.resolve()
+      if (this.connectionId !== undefined) {
+        let params = new URLSearchParams()
+        params.set('connectionId', this.connectionId)
+        params.set('method', 'close')
+        params.set('sseVersion', Sse.version)
+        navigator.sendBeacon(`${this.options.url}/disconnect`, params)
+        this.clearReconnectTimer()
+        this.es = null
+      }
     }
 
     // 监听浏览器窗口切换时
     document.addEventListener('visibilitychange', (e) => {
-      this.clearReconnectTimer()
       if (document.visibilityState === 'visible') {
-        this.newEventSource().then(es => {
-          this.es = es
-        })
+        this.es = this.newEventSource()
       } else {
         this.close()
       }
@@ -103,13 +106,12 @@ class Sse {
     window.addEventListener('unload', () => {
       let params = new URLSearchParams()
       params.set('connectionId', this.connectionId)
-      params.set('method', 'beacon')
+      params.set('method', 'unload')
       params.set('sseVersion', Sse.version)
       navigator.sendBeacon(`${this.options.url}/disconnect`, params)
     }, false)
-    this.newEventSource().then(es => {
-      this.es = es
-    })
+
+    this.es = this.newEventSource()
   }
 }
 
