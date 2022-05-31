@@ -2,7 +2,7 @@
  * iterget - EventSource业务接口封装
  *
  * 前端
- *   sse.js
+ *   https://github.com/wangzihaogithub/sse-js.git
  *
  * 后端
  *   <!-- https://mvnrepository.com/artifact/com.github.wangzihaogithub/sse-server -->
