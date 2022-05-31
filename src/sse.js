@@ -14,24 +14,32 @@
  */
 class Sse {
   static version = '1.0.0'
-  static defaultOptions = {
+  static DEFAULT_OPTIONS = {
     url: '/common/sse',
     eventListeners: {}
   }
+  static DEFAULT_RECONNECT_TIME = 5000
   static STATE_ESTABLISHED = 'ESTABLISHED'
   static STATE_CONNECT = 'CONNECT'
   static STATE_CLOSED = 'CLOSED'
 
   state = Sse.STATE_CLOSED
+  connectionName = ''
 
   constructor(options) {
-    this.options = Object.assign({}, Sse.defaultOptions, options)
+    this.options = Object.assign({}, Sse.DEFAULT_OPTIONS, options)
 
     this.handleConnectionFinish = (event) => {
       const res = JSON.parse(event.data)
       this.connectionId = res.connectionId
-      this.reconnectDuration = res.duration || 5000
+      this.reconnectDuration = this.options.reconnectTime || res.reconnectTime || Sse.DEFAULT_RECONNECT_TIME
       this.state = Sse.STATE_ESTABLISHED
+      this.connectionTimestamp = res.serverTime
+      this.connectionName = res.name
+    }
+
+    this.toString = () => {
+      return `${this.connectionName}:${this.state}`
     }
 
     this.handleOpen = () => {
@@ -43,7 +51,7 @@ class Sse {
       this.clearReconnectTimer()
       this.timer = setTimeout(() => {
         this.es = this.newEventSource()
-      }, this.reconnectDuration || 5000)
+      }, this.reconnectDuration || this.options.reconnectTime || Sse.DEFAULT_RECONNECT_TIME)
     }
 
     this.newEventSource = () => {
