@@ -6,26 +6,17 @@ sse-js
 #### 软件架构
 软件架构说明
 
-后端java依赖
-
-
-            <!-- https://mvnrepository.com/artifact/com.github.wangzihaogithub/sse-server -->
-            <dependency>
-                <groupId>com.github.wangzihaogithub</groupId>
-                <artifactId>sse-server</artifactId>
-                <version>1.0.4</version>
-            </dependency>
-
-
 #### 安装教程
 
 1. Vue示例：
 
-    
+
+            import Sse from '../util/sse.js'
+            
             mounted() {
               // 服务端推送
               this.sse = new Sse({
-                url : '/common/sse',
+                url : '/api/sse',
                 eventListeners:{
                   'myevent-alert': this.onAlert,
                   'myevent-bell': this.onBell
@@ -37,8 +28,20 @@ sse-js
             }
     
 
-2.  xxxx
-3.  xxxx
+2. 后端java
+
+
+            源码 https://github.com/wangzihaogithub/sse-server.git
+            
+            导包
+            <!-- https://mvnrepository.com/artifact/com.github.wangzihaogithub/sse-server -->
+            <dependency>
+                <groupId>com.github.wangzihaogithub</groupId>
+                <artifactId>sse-server</artifactId>
+                <version>1.0.4</version>
+            </dependency>
+
+
 
 #### 使用说明
 
