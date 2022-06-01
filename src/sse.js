@@ -22,6 +22,10 @@ class Sse {
   static STATE_ESTABLISHED = 'ESTABLISHED'
   static STATE_CONNECT = 'CONNECT'
   static STATE_CLOSED = 'CLOSED'
+  static install = function (Vue, opts = {}) {
+    window.Sse = Sse
+    console.log('install Sse')
+  }
 
   state = Sse.STATE_CLOSED
   connectionName = ''
@@ -135,4 +139,5 @@ class Sse {
   }
 }
 
+window.Sse = Sse
 export default Sse
