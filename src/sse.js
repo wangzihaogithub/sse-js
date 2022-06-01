@@ -15,7 +15,7 @@
 class Sse {
   static version = '1.0.0'
   static DEFAULT_OPTIONS = {
-    url: '/common/sse',
+    url: '/api/sse',
     eventListeners: {}
   }
   static DEFAULT_RECONNECT_TIME = 5000
