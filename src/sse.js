@@ -16,7 +16,9 @@ class Sse {
   static version = '1.0.0'
   static DEFAULT_OPTIONS = {
     url: '/api/sse',
-    eventListeners: {}
+    keepaliveTime: 30000,
+    eventListeners: {},
+    query: {}
   }
   static DEFAULT_RECONNECT_TIME = 5000
   /**
@@ -33,7 +35,6 @@ class Sse {
   /**
    * CLOSED（数值 2）
    * 连接未打开，并且用户代理未尝试重新连接。要么存在致命错误，要么close()调用了该方法。
-   * @type {number}
    */
   static STATE_CLOSED = 2
 
@@ -91,7 +92,22 @@ class Sse {
         }
       }
       this.state = Sse.STATE_CONNECTING
-      const es = new EventSource(`${this.options.url}/connect?clientId=${this.clientId}&clientVersion=${Sse.version}`)
+
+      const query = new URLSearchParams()
+      query.append('keepaliveTime', this.options.keepaliveTime)
+      query.append('clientId', this.clientId)
+      query.append('clientVersion', Sse.version)
+      query.append('screen', `${window.screen.width}x${window.screen.height}`)
+      if (window.performance.memory) {
+        for (let key in window.performance.memory) {
+          query.append(key, window.performance.memory[key])
+        }
+      }
+      for (let key in this.options.query) {
+        query.append(key, this.options.query[key])
+      }
+
+      const es = new EventSource(`${this.options.url}/connect?${query.toString()}`)
       es.addEventListener('connect-finish', this.handleConnectionFinish)
       es.addEventListener('open', this.handleOpen)    // 连接成功
       es.addEventListener('error', this.handleError)  // 失败
