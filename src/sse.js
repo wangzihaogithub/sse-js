@@ -16,7 +16,7 @@ class Sse {
   static version = '1.0.0'
   static DEFAULT_OPTIONS = {
     url: '/api/sse',
-    keepaliveTime: 30000,
+    keepaliveTime: 300000,
     eventListeners: {},
     query: {}
   }
