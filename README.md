@@ -27,7 +27,28 @@ sse-js
               this.sse.destroy()
             }
     
-
+2. 示例2, 原生html或Vue：
+    
+    
+          1. 在index.html加入代码
+          
+          <script>
+                function addSseEventListener(url, eventListeners) {
+                  return import(url).then(module => new module.default({url, eventListeners}))
+                }
+          </script>
+  
+         2. 使用
+         
+            const listeners = {
+               'myHunterBell': this.onHunterBell,
+               'xxx-xx': this.xx
+             }
+            addSseEventListener('/sse/hr', listeners).then(sseConnection => {
+               this.sseConnection = sseConnection
+            })
+            
+             
 2. 后端java
 
 
@@ -38,7 +59,7 @@ sse-js
             <dependency>
                 <groupId>com.github.wangzihaogithub</groupId>
                 <artifactId>sse-server</artifactId>
-                <version>1.0.5</version>
+                <version>1.0.6</version>
             </dependency>
 
 
