@@ -27,7 +27,8 @@ sse-js
               this.sse.destroy()
             }
     
-2. 示例2, 原生html或Vue：
+    
+2. 示例2, 原生html或Vue (不需要前端引入任何依赖sse.js, 只需要前端下面几行代码)
     
     
           1. 在index.html加入代码
