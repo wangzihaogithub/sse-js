@@ -19,7 +19,10 @@ class Sse {
     keepaliveTime: 900000,
     eventListeners: {},
     query: {},
-    withCredentials: true
+    withCredentials: true,
+    clientId: null,
+    accessTimestamp: null,
+    reconnectTime: null
   }
   static DEFAULT_RECONNECT_TIME = 5000
   /**
