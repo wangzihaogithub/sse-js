@@ -45,7 +45,7 @@ sse-js
                'myHunterBell': this.onHunterBell,
                'xxx-xx': this.xx
              }
-            addSseEventListener('/sse/hr', listeners).then(sseConnection => {
+            sseEventListener('/sse/hr', listeners).then(sseConnection => {
                this.sseConnection = sseConnection
             })
             
@@ -60,7 +60,7 @@ sse-js
             <dependency>
                 <groupId>com.github.wangzihaogithub</groupId>
                 <artifactId>sse-server</artifactId>
-                <version>1.0.7</version>
+                <version>1.1.0</version>
             </dependency>
 
 
