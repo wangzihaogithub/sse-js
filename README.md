@@ -34,9 +34,10 @@ sse-js
           1. 在index.html加入代码
           
           <script>
-                function addSseEventListener(url, eventListeners) {
-                  return import(url).then(module => new module.default({url, eventListeners}))
-                }
+              function sseEventListener(url, eventListeners, query) {
+                return import(url + '?' + new URLSearchParams(query))
+                  .then(module => new module.default({url,eventListeners,query}))
+              }
           </script>
   
          2. 使用

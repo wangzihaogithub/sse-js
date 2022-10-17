@@ -9,11 +9,11 @@
  *   <dependency>
  *      <groupId>com.github.wangzihaogithub</groupId>
  *      <artifactId>sse-server</artifactId>
- *      <version>1.1.2</version>
+ *      <version>1.1.3</version>
  *   </dependency>
  */
 class Sse {
-    static version = '1.1.2'
+    static version = '1.1.3'
     static DEFAULT_OPTIONS = {
         url: '/api/sse',
         keepaliveTime: 900000,
@@ -85,10 +85,12 @@ class Sse {
         this.handleConnectionFinish = (event) => {
             this.clearReconnectTimer()
             const res = JSON.parse(event.data)
+            this.connectResponse = res
             this.connectionId = res.connectionId
             this.reconnectDuration = this.options.reconnectTime || res.reconnectTime || Sse.DEFAULT_RECONNECT_TIME
             this.connectionTimestamp = res.serverTime
             this.connectionName = res.name
+            this.serverVersion = res.version
 
             this.flush()
         }
