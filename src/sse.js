@@ -9,11 +9,11 @@
  *   <dependency>
  *      <groupId>com.github.wangzihaogithub</groupId>
  *      <artifactId>sse-server</artifactId>
- *      <version>1.1.4</version>
+ *      <version>1.1.5</version>
  *   </dependency>
  */
 class Sse {
-  static version = '1.1.4'
+  static version = '1.1.5'
   static DEFAULT_OPTIONS = {
     url: '/api/sse',
     keepaliveTime: 900000,
@@ -189,8 +189,8 @@ class Sse {
 
       // 用户事件
       for (const eventName in this.options.eventListeners) {
-          const fn = this.options.eventListeners[eventName]
-          this._addEventListener(es,eventName,fn)
+        const fn = this.options.eventListeners[eventName]
+        this._addEventListener(es,eventName,fn)
       }
       this.es = es
     }
@@ -491,6 +491,7 @@ class Sse {
     })
 
     this.newEventSource()
+    window.sse = this
   }
 }
 
