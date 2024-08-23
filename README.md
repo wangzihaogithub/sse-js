@@ -61,7 +61,7 @@ sse-js
             <dependency>
                 <groupId>com.github.wangzihaogithub</groupId>
                 <artifactId>sse-server</artifactId>
-                <version>1.2.16</version>
+                <version>1.2.17</version>
             </dependency>
 
 
